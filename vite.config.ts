@@ -17,10 +17,11 @@ export default defineConfig({
     ? {
         lib: {
           entry: {
-            'index': resolve(__dirname, 'src/index.ts'),
-            'ime': resolve(__dirname, 'src/ime.ts'),
+            'nagarjuna': resolve(__dirname, 'src/index.ts'),
+            'nagarjuna-ime': resolve(__dirname, 'src/ime.ts'),
           },
-          formats: ['es']
+          formats: ['es','cjs','umd'],
+          name: 'nagarjuna'
         }
       }
     : {

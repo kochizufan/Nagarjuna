@@ -8,6 +8,12 @@ const __dirname = path.dirname(__filename);
 
 console.log(`isPackageBuild_Dic: ${process.env.BUILD_MODE}`);
 
+const DAKUTEN = '\u3099';
+const HANDAKUTEN = '\u309A';
+
+const DAKUTEN_CANDIDATES = ['か', 'き', 'く', 'け', 'こ', 'さ', 'し', 'す', 'せ', 'そ', 'た', 'ち', 'つ', 'て', 'と', 'は', 'ひ', 'ふ', 'へ', 'ほ'];
+const HANDAKUTEN_CANDIDATES = ['は', 'ひ', 'ふ', 'へ', 'ほ'];
+
 interface RawEntry {
   reading: string;
   character: string;
@@ -67,6 +73,45 @@ function parseDictionaryFile(filePath: string): RawEntry[] {
     });
 }
 
+function addDakutenVariations(entry: RawEntry): RawEntry[] {
+  const variations: RawEntry[] = [entry];
+  
+  if (DAKUTEN_CANDIDATES.includes(entry.reading)) {
+    variations.push({
+      ...entry,
+      reading: getDakutenReading(entry.reading),
+      character: entry.character + DAKUTEN
+    });
+  }
+  
+  if (HANDAKUTEN_CANDIDATES.includes(entry.reading)) {
+    variations.push({
+      ...entry,
+      reading: getHandakutenReading(entry.reading),
+      character: entry.character + HANDAKUTEN
+    });
+  }
+  
+  return variations;
+}
+
+function getDakutenReading(reading: string): string {
+  const dakutenMap: { [key: string]: string } = {
+    'か': 'が', 'き': 'ぎ', 'く': 'ぐ', 'け': 'げ', 'こ': 'ご',
+    'さ': 'ざ', 'し': 'じ', 'す': 'ず', 'せ': 'ぜ', 'そ': 'ぞ',
+    'た': 'だ', 'ち': 'ぢ', 'つ': 'づ', 'て': 'で', 'と': 'ど',
+    'は': 'ば', 'ひ': 'び', 'ふ': 'ぶ', 'へ': 'べ', 'ほ': 'ぼ'
+  };
+  return dakutenMap[reading] || reading;
+}
+
+function getHandakutenReading(reading: string): string {
+  const handakutenMap: { [key: string]: string } = {
+    'は': 'ぱ', 'ひ': 'ぴ', 'ふ': 'ぷ', 'へ': 'ぺ', 'ほ': 'ぽ'
+  };
+  return handakutenMap[reading] || reading;
+}
+
 function generateTypeScriptCode(entries: RawEntry[]): string {
   const processedEntries = entries.map(entry => ({
     reading: entry.reading,
@@ -95,11 +140,18 @@ for (const config of DICTIONARY_FILES) {
   const fileEntries = parseDictionaryFile(filePath);
   
   fileEntries.forEach(entry => {
-    entries.push({
+    const baseEntry = {
       ...entry,
       type: config.type,
       isBuddhaName: config.isBuddhaName
-    });
+    };
+
+    if (config.type === 'hentaigana') {
+      // 変体仮名の場合は濁点・半濁点処理を追加
+      entries.push(...addDakutenVariations(baseEntry));
+    } else {
+      entries.push(baseEntry);
+    }
   });
 }
 
