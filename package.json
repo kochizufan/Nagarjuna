@@ -6,19 +6,16 @@
   "private": false,
   "main": "./dist/nagarjuna.cjs",
   "module": "./dist/nagarjuna.js",
-  "browser": "./dist/nagarjuna.umd.cjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/nagarjuna.js",
       "require": "./dist/nagarjuna.cjs",
-      "browser": "./dist/nagarjuna.umd.cjs",
       "types": "./dist/index.d.ts"
     },
     "./ime": {
       "import": "./dist/nagarjuna-ime.js",
       "require": "./dist/nagarjuna-ime.cjs",
-      "browser": "./dist/nagarjuna-ime.umd.cjs",
       "types": "./dist/ime.d.ts"
     }
   },

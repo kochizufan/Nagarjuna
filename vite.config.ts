@@ -20,7 +20,7 @@ export default defineConfig({
             'nagarjuna': resolve(__dirname, 'src/index.ts'),
             'nagarjuna-ime': resolve(__dirname, 'src/ime.ts'),
           },
-          formats: ['es','cjs','umd'],
+          formats: ['es','cjs'],
           name: 'nagarjuna'
         }
       }
